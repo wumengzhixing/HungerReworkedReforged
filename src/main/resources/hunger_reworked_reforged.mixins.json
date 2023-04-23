@@ -1,0 +1,15 @@
+{
+	"required": true,
+	"compatibilityLevel": "JAVA_17",
+	"minVersion": "0.8.5",
+	"package": "net.mcbbs.uid1525632.hungerreworkedreforged.core.mixin",
+	"refmap": "hunger_reworked_reforged.refmap.json",
+	"mixins": [
+		"MixinCakeBlock",
+		"MixinFoodProperties",
+		"MixinLivingEntity",
+		"MixinPlayer"
+	],
+	"client": [],
+	"server": []
+}

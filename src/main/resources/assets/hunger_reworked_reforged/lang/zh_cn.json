@@ -1,0 +1,14 @@
+{
+  "effect.hunger_reworked_reforged.fast_digestion": "助消化",
+  "effect.hunger_reworked_reforged.overstuffed": "吃撑",
+  "effect.hunger_reworked_reforged.strong_stomach": "铁胃",
+  "effect.hunger_reworked_reforged.vomiting": "呕吐",
+  "item.minecraft.lingering_potion.effect.fast_digestion_potion": "滞留助消化药水",
+  "item.minecraft.lingering_potion.effect.strong_stomach_potion": "滞留铁胃药水",
+  "item.minecraft.potion.effect.fast_digestion_potion": "助消化药水",
+  "item.minecraft.potion.effect.strong_stomach_potion": "铁胃药水",
+  "item.minecraft.splash_potion.effect.fast_digestion_potion": "喷溅助消化药水",
+  "item.minecraft.splash_potion.effect.strong_stomach_potion": "喷溅铁胃药水",
+  "item.minecraft.tipped_arrow.effect.fast_digestion_potion": "助消化药水箭",
+  "item.minecraft.tipped_arrow.effect.strong_stomach_potion": "铁胃药水箭"
+}

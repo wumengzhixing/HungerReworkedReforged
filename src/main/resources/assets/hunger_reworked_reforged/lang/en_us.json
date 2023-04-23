@@ -1,0 +1,14 @@
+{
+  "effect.hunger_reworked_reforged.fast_digestion": "Fast Digestion",
+  "effect.hunger_reworked_reforged.overstuffed": "Overstuffed",
+  "effect.hunger_reworked_reforged.strong_stomach": "Strong Stomach",
+  "effect.hunger_reworked_reforged.vomiting": "Vomiting",
+  "item.minecraft.lingering_potion.effect.fast_digestion_potion": "Lingering Potion of Fast Digestion",
+  "item.minecraft.lingering_potion.effect.strong_stomach_potion": "Lingering Potion of Strong Stomach",
+  "item.minecraft.potion.effect.fast_digestion_potion": "Potion of Fast Digestion",
+  "item.minecraft.potion.effect.strong_stomach_potion": "Potion of Strong Stomach",
+  "item.minecraft.splash_potion.effect.fast_digestion_potion": "Splash Potion of Fast Digestion",
+  "item.minecraft.splash_potion.effect.strong_stomach_potion": "Splash Potion of Strong Stomach",
+  "item.minecraft.tipped_arrow.effect.fast_digestion_potion": "Arrow of Fast Digestion",
+  "item.minecraft.tipped_arrow.effect.strong_stomach_potion": "Arrow of Strong Stomach"
+}

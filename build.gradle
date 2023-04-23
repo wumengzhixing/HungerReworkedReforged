@@ -1,0 +1,104 @@
+plugins {
+    id 'idea'
+    id 'net.minecraftforge.gradle'
+    id 'org.spongepowered.mixin'
+    id 'org.parchmentmc.librarian.forgegradle'
+    id 'maven-publish'
+}
+
+version = '1.0.0'
+group = 'me.adneths'
+archivesBaseName = 'hunger_reworked_reforged'
+
+repositories {
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.18.2-40.1.73'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    compileOnly fg.deobf("curse.maven:diet-443570:3751149")
+}
+
+mixin {
+	add sourceSets.main, 'hunger_reworked_reforged.refmap.json'
+	config 'hunger_reworked_reforged.mixins.json'
+	
+	debug.verbose = true
+    debug.export = true
+}
+
+
+println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
+minecraft {
+    mappings channel: 'parchment', version: "2022.11.06-1.18.2"
+	runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', 'hunger_reworked_reforged'
+            mods { 'hunger_reworked_reforged' { source sourceSets.main } }
+        }
+        server {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', 'hunger_reworked_reforged'
+            mods { 'hunger_reworked_reforged' { source sourceSets.main } }
+        }
+        gameTestServer {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', 'hunger_reworked_reforged'
+            mods { 'hunger_reworked_reforged' { source sourceSets.main } }
+        }
+        data {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            args '--mod', 'hunger_reworked_reforged', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            mods { 'hunger_reworked_reforged' { source sourceSets.main } }
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes([
+                "Specification-Title"     : "HungerReworkedReforged",
+                "Specification-Vendor"    : "无梦之心",
+                "Specification-Version"   : "1", // We are version 1 of ourselves
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : project.jar.archiveVersion,
+                "Implementation-Vendor"   : "无梦之心",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                'MixinConfigs': 'hunger_reworked_reforged.mixins.json'
+        ])
+    }
+}
+
+jar.finalizedBy('reobfJar')
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
