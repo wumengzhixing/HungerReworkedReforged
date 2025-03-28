@@ -14,7 +14,7 @@ import static net.mcbbs.uid1525632.hungerreworkedreforged.HungerReworked.MOD_ID;
 @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class AttributeRegistration
 {
-	public static final Attribute EXTRA_STOMACH = new RangedAttribute("generic.hunger_reworked_reforged.extra_stomach", 0.0D, -1.0D, 300.0D);
+	public static final Attribute EXTRA_STOMACH = new RangedAttribute("attribute.name.hunger_reworked_reforged.extra_stomach", 0.0D, -1.0D, 300.0D);
 
 	@SubscribeEvent
 	public static void init(RegistryEvent.Register<Attribute> event)

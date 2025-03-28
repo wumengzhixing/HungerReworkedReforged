@@ -10,5 +10,7 @@
   "item.minecraft.splash_potion.effect.fast_digestion_potion": "喷溅助消化药水",
   "item.minecraft.splash_potion.effect.strong_stomach_potion": "喷溅铁胃药水",
   "item.minecraft.tipped_arrow.effect.fast_digestion_potion": "助消化药水箭",
-  "item.minecraft.tipped_arrow.effect.strong_stomach_potion": "铁胃药水箭"
+  "item.minecraft.tipped_arrow.effect.strong_stomach_potion": "铁胃药水箭",
+
+  "attribute.name.hunger_reworked_reforged.extra_stomach": "额外胃容量"
 }
