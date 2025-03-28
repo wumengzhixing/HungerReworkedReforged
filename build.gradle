@@ -6,8 +6,8 @@ plugins {
     id 'maven-publish'
 }
 
-version = '1.0.0'
-group = 'me.adneths'
+version = '1.0.1'
+group = 'net.mcbbs.uid1525632'
 archivesBaseName = 'hunger_reworked_reforged'
 
 repositories {
@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.73'
+    minecraft 'net.minecraftforge:forge:1.18.2-40.3.0'
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     compileOnly fg.deobf("curse.maven:diet-443570:3751149")
 }

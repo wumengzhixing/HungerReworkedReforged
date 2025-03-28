@@ -26,6 +26,7 @@ package net.mcbbs.uid1525632.hungerreworkedreforged.init;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.mcbbs.uid1525632.hungerreworkedreforged.HungerReworked;
+import net.mcbbs.uid1525632.hungerreworkedreforged.capability.PlayerStomach;
 import net.mcbbs.uid1525632.hungerreworkedreforged.capability.PlayerStomachProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
@@ -60,7 +61,7 @@ public class ClientSide
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderTexture(0, TEXTURE_LOCATION);
-			int maxAmount = Math.max(foodAmount, 20 + ssa * 8);
+			int maxAmount = Math.max(foodAmount, PlayerStomach.getStomachCapability(player) + ssa * 8);
 			
 			int rows = Math.max(1, (maxAmount + 19) / 20);
 			int rowHeight = Math.max(3, 12 - rows*2);

@@ -29,6 +29,7 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 
+import net.mcbbs.uid1525632.hungerreworkedreforged.init.AttributeRegistration;
 import net.mcbbs.uid1525632.hungerreworkedreforged.init.CommonSide;
 import net.mcbbs.uid1525632.hungerreworkedreforged.init.Registration;
 import net.mcbbs.uid1525632.hungerreworkedreforged.network.Messages;
@@ -38,6 +39,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.food.FoodProperties;
@@ -50,8 +52,14 @@ public class PlayerStomach
 
 	public PlayerStomach()
 	{
-		content = new ArrayList<Food>();
+		content = new ArrayList<>();
 		totalFood = 0;
+	}
+
+	public static int getStomachCapability(Player player)
+	{
+		AttributeInstance instance = player.getAttribute(AttributeRegistration.EXTRA_STOMACH);
+		return (instance == null ? 0 : (int)instance.getValue()) + 20;
 	}
 
 	public void addFood(Player player, Food food)
@@ -70,9 +78,7 @@ public class PlayerStomach
 		if(!player.level.isClientSide)
 		{
 			totalFood = 0;
-			content.forEach((food) -> {
-				totalFood += food.foodRemaining();
-			});
+			content.forEach((food) -> totalFood += food.foodRemaining());
 			sendUpdatePacket(player);
 		}
 	}
@@ -113,7 +119,7 @@ public class PlayerStomach
 			FoodData data = player.getFoodData();
 			double part = amount;
 			int maxFood = 20 - data.getFoodLevel();
-			List<Food> finished = new ArrayList<Food>();
+			List<Food> finished = new ArrayList<>();
 			for(int i = 0; i < content.size() && maxFood > 0; i++)
 			{
 				if(i != content.size() - 1)
@@ -141,13 +147,11 @@ public class PlayerStomach
 			});
 
 			totalFood = 0;
-			content.forEach((food) -> {
-				totalFood += food.foodRemaining();
-			});
+			content.forEach((food) -> totalFood += food.foodRemaining());
 
 			MobEffectInstance ss = player.getEffect(Registration.STRONG_STOMACH.get());
 			int ext;
-			if((ext = totalFood - 20 - (ss == null ? 0 : (ss.getAmplifier() + 1) * 8)) > 0 && !player.hasEffect(Registration.VOMITING.get()))
+			if((ext = totalFood - getStomachCapability(player) - (ss == null ? 0 : (ss.getAmplifier() + 1) * 8)) > 0 && !player.hasEffect(Registration.VOMITING.get()))
 			{
 				player.addEffect(new MobEffectInstance(Registration.OVERSTUFFED.get(), 80, ext / 8 - (ss == null ? 0 : ss.getAmplifier())));
 			}

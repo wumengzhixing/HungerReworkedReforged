@@ -25,9 +25,7 @@ package net.mcbbs.uid1525632.hungerreworkedreforged.effect;
 
 import net.mcbbs.uid1525632.hungerreworkedreforged.capability.PlayerStomach;
 import net.mcbbs.uid1525632.hungerreworkedreforged.capability.PlayerStomachProvider;
-import net.mcbbs.uid1525632.hungerreworkedreforged.init.CommonSide;
 import net.mcbbs.uid1525632.hungerreworkedreforged.init.Registration;
-import net.mcbbs.uid1525632.hungerreworkedreforged.integration.diet.ProxyIDietGroup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -65,7 +63,7 @@ public class FoodMobEffect extends MobEffect
 			if(!pLivingEntity.level.isClientSide && pLivingEntity instanceof Player player && player.hasEffect(Registration.OVERSTUFFED.get()))
 			{
 				PlayerStomach data = player.getCapability(PlayerStomachProvider.PLAYER_STOMACH).orElse(null);
-				if(data != null && data.totalFood - (1+pAmplifier)*8 <= 20)
+				if(data != null && data.totalFood - (1+pAmplifier)*8 <= PlayerStomach.getStomachCapability(player))
 					player.removeEffect(Registration.OVERSTUFFED.get());
 			}
 		}
