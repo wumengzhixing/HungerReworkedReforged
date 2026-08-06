@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "hunger_reworked_reforged:item/digestive_tablet"
+  }
+}

@@ -1,0 +1,19 @@
+{
+	"required": true,
+	"compatibilityLevel": "JAVA_21",
+	"minVersion": "0.8.5",
+	"package": "com.wu_meng.hungerreworkedreforged.mixin",
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"mixins": [
+		"MixinAppleSeed",
+		"MixinAppleSeedBlockFoodHandler",
+		"MixinCakeBlock",
+		"MixinItem",
+		"MixinLivingEntity",
+		"MixinPlayer"
+	],
+	"client": [],
+	"server": []
+}

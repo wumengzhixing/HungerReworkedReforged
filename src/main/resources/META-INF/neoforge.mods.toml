@@ -1,0 +1,34 @@
+modLoader="javafml"
+loaderVersion="${loader_version_range}"
+license="${mod_license}"
+
+[[mods]]
+    modId="${mod_id}"
+    version="${mod_version}"
+    displayName="${mod_name}"
+    logoFile="logo.png"
+    credits="Thank Adneths for making Hunger Rework"
+    authors="${mod_authors}"
+    description='''${mod_description}'''
+
+[[mixins]]
+    config="${mod_id}.mixins.json"
+
+[[dependencies.hunger_reworked_reforged]]
+    modId="neoforge"
+    type="required"
+    versionRange="${neo_version_range}"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.hunger_reworked_reforged]]
+    modId="minecraft"
+    type="required"
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.hunger_reworked_reforged]]
+    modId="appleseed"
+    type="optional"
+    versionRange="[3.0.1,3.1.0)"
+    ordering="AFTER"
+    side="BOTH"

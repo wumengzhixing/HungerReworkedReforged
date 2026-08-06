@@ -1,0 +1,215 @@
+plugins {
+    id 'java-library'
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id 'jacoco'
+    id 'net.neoforged.gradle.userdev' version '7.1.20'
+}
+
+version = mod_version
+group = 'com.wu_meng.hungerreworkedreforged'
+
+base {
+    archivesName = mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+runs {
+    configureEach {
+        systemProperty 'forge.logging.markers', 'REGISTRIES'
+        systemProperty 'forge.logging.console.level', 'info'
+
+        modSource project.sourceSets.main
+    }
+
+    client {
+        runType 'client'
+        workingDirectory project.file('run/client')
+        systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
+    }
+
+    server {
+        runType 'server'
+        workingDirectory project.file('run/server')
+        systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
+    }
+
+    gameTestServer {
+        runType 'gameTestServer'
+        workingDirectory project.file('run/testServer')
+        // 测试使用原版 minecraft:empty 结构，同时只显式注册 HRR 自己的测试类。
+        systemProperty 'neoforge.enabledGameTestNamespaces', "${mod_id},minecraft"
+
+        // 配置 JaCoCo agent 来收集游戏测试的覆盖率
+        jvmArguments.add(provider {
+            "-javaagent:${configurations.gameTestJacocoAgent.singleFile}=destfile=${layout.buildDirectory.get()}/jacoco/gameTest.exec,includes=com.wu_meng.hungerreworkedreforged.*"
+        })
+    }
+
+    data {
+        runType 'data'
+        workingDirectory project.file('run/data')
+
+        arguments.addAll '--mod', mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+    }
+}
+
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+    exclude '**/.cache/**'
+}
+
+repositories {
+    maven { url = 'https://neoforged.forgecdn.net/releases' }
+    maven { url = 'https://neoforged.forgecdn.net' }
+    maven { url = 'https://neoforged.forgecdn.net/mojang-meta' }
+    maven {
+        url = 'https://www.cursemaven.com'
+        content { includeGroup 'curse.maven' }
+    }
+    mavenCentral()
+}
+
+// NeoGradle 会为工具链创建独立仓库；当前网络环境无法连接官方 Maven，
+// 与本地 AppleSeed 3.0.1 工程的 init.gradle 保持一致，将其重定向到 ForgeCDN。
+repositories.whenObjectAdded { ArtifactRepository repo ->
+    if (repo instanceof MavenArtifactRepository &&
+            repo.url.toString().startsWith('https://maven.neoforged.net/releases')) {
+        repo.url = 'https://neoforged.forgecdn.net'
+    }
+}
+repositories.all { ArtifactRepository repo ->
+    if (repo instanceof MavenArtifactRepository &&
+            repo.url.toString().startsWith('https://maven.neoforged.net/releases')) {
+        repo.url = 'https://neoforged.forgecdn.net'
+    }
+}
+
+configurations {
+    gameTestJacocoAgent {
+        transitive = false
+    }
+    localRuntime
+    runtimeClasspath.extendsFrom localRuntime
+}
+
+dependencies {
+    implementation "net.neoforged:neoforge:${neo_version}"
+    compileOnly files("libs/appleseed-3.0.1-1.21.1.jar")
+    localRuntime files("libs/appleseed-3.0.1-1.21.1.jar")
+    // AppleSeed 3.0.1 的必需运行依赖，仅用于本项目开发启动，不会打进 HRR 成品。
+    localRuntime "curse.maven:cloudworks-api-1621946:8498808"
+
+    // 单元测试依赖喵~
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${project.junit_version}"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:${project.junit_version}"
+    testRuntimeOnly    "org.junit.platform:junit-platform-launcher"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:${project.junit_version}"
+    testImplementation "org.mockito:mockito-junit-jupiter:${project.mockito_version}"
+    testImplementation "org.mockito:mockito-core:${project.mockito_version}"
+    testImplementation "org.mockito:mockito-inline:${project.mockito_version}"
+
+    // JaCoCo agent 依赖，用于游戏测试覆盖率收集喵~
+    gameTestJacocoAgent "org.jacoco:org.jacoco.agent:${jacoco.toolVersion}:runtime"
+}
+
+tasks.withType(ProcessResources).configureEach {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            neo_version_range      : neo_version_range,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/neoforge.mods.toml']) {
+        expand replaceProperties
+    }
+}
+
+tasks.register('prepareGameTestStructures', Copy) {
+    from layout.projectDirectory.dir('src/gametest/resources')
+    into layout.projectDirectory.dir('run/testServer/gameteststructures')
+}
+
+tasks.matching { it.name == 'runGameTestServer' }.configureEach {
+    dependsOn tasks.named('prepareGameTestStructures')
+}
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url = uri('repo')
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(Test).configureEach { testTask ->
+    testTask.useJUnitPlatform()
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.13"
+}
+
+test {
+    finalizedBy jacocoTestReport
+    useJUnitPlatform()
+    maxParallelForks = Math.min(4, Math.max(1, Runtime.runtime.availableProcessors() - 1))
+    jacoco {
+        // 排除 Minecraft 原版类，避免 MethodTooLargeException。
+        excludes = ['net.minecraft.*']
+    }
+    jvmArgs(
+        "-Dnet.bytebuddy.experimental=true",
+        "-XX:+EnableDynamicAgentLoading"  // 修复 Java 21 的 agent 加载警告喵~
+    )
+}
+
+jacocoTestReport {
+    dependsOn tasks.withType(Test)
+    executionData(fileTree(layout.buildDirectory.dir('jacoco')).include('*.exec'))
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+    // 排除无法插桩的 Minecraft 类喵~
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                '**/net/minecraft/**'  // 排除所有 Minecraft 原版类喵~
+            ])
+        }))
+    }
+}
+
+
+java {
+    withSourcesJar()
+}
